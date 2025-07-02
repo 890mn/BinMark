@@ -1,5 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Window 2.15
+import QtQuick.Controls
+import QtQuick.Layouts
 import FluentUI 1.0
 
 FluWindow {
@@ -9,42 +11,52 @@ FluWindow {
     minimumHeight: 240
     title: qsTr("BinMark")
 
-    Column{
-        anchors.centerIn: parent
-        spacing: 15
-        Image{
-            width: 60
-            height: 60
-            source: "qrc:/logo.ico"
-            anchors.horizontalCenter: parent.horizontalCenter
+    RowLayout {
+        anchors.fill: parent
+
+        // 左边文件树
+        FileTree {
+            width: 300
         }
-        FluText{
-            text: qsTr("Welcome to FluentUI")
-            anchors.horizontalCenter: parent.horizontalCenter
-            font: FluTextStyle.Title
+
+        // 图片展示
+        Image {
+            fillMode: Image.PreserveAspectFit
+            source: imageManager.currentImage
+            onStatusChanged: {
+                if (status === Image.Error)
+                    console.log("图片加载失败:", source)
+            }
         }
-        FluFilledButton{
-            text: qsTr("Learn FluentUI")
-            anchors.horizontalCenter: parent.horizontalCenter
-            onClicked: {
-                Qt.openUrlExternally("https://space.bilibili.com/275661059")
+
+        // 按钮区域
+        ColumnLayout {
+            spacing: 10
+            FluButton {
+                text: "好图"
+                onClicked: imageManager.markCurrent(true)
+            }
+            FluButton {
+               text: "坏图"
+                onClicked: imageManager.markCurrent(false)
             }
         }
     }
 
-    Row{
-        anchors{
-            bottom: parent.bottom
-            bottomMargin: 14
-            horizontalCenter: parent.horizontalCenter
-        }
-        FluText{
-            text: qsTr("Author's WeChat ID: ")
-        }
-        FluText{
-            text: "FluentUI"
-            color: FluTheme.fontSecondaryColor
-        }
+    Shortcut {
+        sequence: "Right"
+        onActivated: imageManager.next()
     }
-
+    Shortcut {
+        sequence: "Left"
+        onActivated: imageManager.previous()
+    }
+    Shortcut {
+        sequence: "Ctrl+H"
+        onActivated: imageManager.markCurrent(true)
+    }
+    Shortcut {
+        sequence: "Ctrl+B"
+        onActivated: imageManager.markCurrent(false)
+    }
 }

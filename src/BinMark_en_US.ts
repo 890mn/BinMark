@@ -4,23 +4,8 @@
 <context>
     <name>main</name>
     <message>
-        <location filename="main.qml" line="10"/>
+        <location filename="main.qml" line="12"/>
         <source>BinMark</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="main.qml" line="22"/>
-        <source>Welcome to FluentUI</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="main.qml" line="27"/>
-        <source>Learn FluentUI</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="main.qml" line="42"/>
-        <source>Author&apos;s WeChat ID: </source>
         <translation type="unfinished"></translation>
     </message>
 </context>

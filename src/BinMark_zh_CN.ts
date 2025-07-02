@@ -4,24 +4,21 @@
 <context>
     <name>main</name>
     <message>
-        <location filename="main.qml" line="10"/>
+        <location filename="main.qml" line="12"/>
         <source>BinMark</source>
         <translation type="unfinished">BinMark</translation>
     </message>
     <message>
-        <location filename="main.qml" line="22"/>
         <source>Welcome to FluentUI</source>
-        <translation type="unfinished">欢迎使用FluentUI</translation>
+        <translation type="obsolete">欢迎使用FluentUI</translation>
     </message>
     <message>
-        <location filename="main.qml" line="27"/>
         <source>Learn FluentUI</source>
-        <translation type="unfinished">学习FluentUI</translation>
+        <translation type="obsolete">学习FluentUI</translation>
     </message>
     <message>
-        <location filename="main.qml" line="42"/>
         <source>Author&apos;s WeChat ID: </source>
-        <translation type="unfinished">作者微信号: </translation>
+        <translation type="obsolete">作者微信号: </translation>
     </message>
 </context>
 </TS>

@@ -1,6 +1,8 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QTranslator>
+#include <QQmlContext>
+#include "ImageManager.h"
 
 int main(int argc, char *argv[])
 {
@@ -20,6 +22,9 @@ int main(int argc, char *argv[])
     }
 
     QQmlApplicationEngine engine;
+    ImageManager imageManager;
+
+    engine.rootContext()->setContextProperty("imageManager", &imageManager);
     const QUrl url(QStringLiteral("qrc:/App.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
         &app, [url](QObject *obj, const QUrl &objUrl) {
