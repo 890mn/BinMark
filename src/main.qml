@@ -182,31 +182,31 @@ FluWindow {
                 spacing: 20
 
                 FluButton {
-                    text: "👍 好图 (Ctrl+H)"
+                    text: "👍 我看行 (Q)"
                     onClicked: globalImageManager.markCurrent(true)
                 }
 
                 FluButton {
-                    text: "👎 坏图 (Ctrl+B)"
+                    text: "👎 不太行 (W)"
                     onClicked: globalImageManager.markCurrent(false)
                 }
 
                 FluButton {
-                    text: "➡️ 下一张 (→)"
-                    onClicked: globalImageManager.next()
+                    text: "⬅️ 上一张 (Space)"
+                    onClicked: globalImageManager.previous()
                 }
 
                 FluButton {
-                    text: "⬅️ 上一张 (←)"
-                    onClicked: globalImageManager.previous()
+                    text: "➡️ 下一张 (D)"
+                    onClicked: globalImageManager.next()
                 }
             }
         }
     }
 
     // 快捷键绑定
-    Shortcut { sequence: "Right"; onActivated: globalImageManager.next() }
-    Shortcut { sequence: "Left"; onActivated: globalImageManager.previous() }
-    Shortcut { sequence: "Ctrl+H"; onActivated: globalImageManager.markCurrent(true) }
-    Shortcut { sequence: "Ctrl+B"; onActivated: globalImageManager.markCurrent(false) }
+    Shortcut { sequence: "Space"; onActivated: globalImageManager.next() }
+    Shortcut { sequence: "D"; onActivated: globalImageManager.previous() }
+    Shortcut { sequence: "Q"; onActivated: globalImageManager.markCurrent(true) }
+    Shortcut { sequence: "W"; onActivated: globalImageManager.markCurrent(false) }
 }
