@@ -1,67 +1,87 @@
 #include "ImageManager.h"
 #include <QDir>
 #include <QDebug>
-#include <QUrl>
+#include <QFileInfo>
 
 ImageManager::ImageManager(QObject *parent)
-    : QObject(parent) {}
+    : QObject(parent)
+{
+}
 
-void ImageManager::loadFromFolder(const QUrl &folderUrl) {
+QUrl ImageManager::currentImage() const
+{
+    if (m_currentIndex >= 0 && m_currentIndex < m_images.size())
+        return QUrl::fromLocalFile(m_images[m_currentIndex]);
+    return QUrl();
+}
+
+QUrl ImageManager::lastGoodImage() const
+{
+    return m_lastGoodImage;
+}
+
+int ImageManager::currentIndex() const
+{
+    return m_currentIndex;
+}
+
+int ImageManager::totalCount() const
+{
+    return m_images.size();
+}
+
+void ImageManager::loadFromFolder(const QUrl &folderUrl)
+{
     QString folderPath = folderUrl.toLocalFile();
     QDir dir(folderPath);
-
     QStringList filters = { "*.png", "*.jpg", "*.jpeg", "*.bmp" };
-    QStringList files = dir.entryList(filters, QDir::Files, QDir::Name);
+    QFileInfoList files = dir.entryInfoList(filters, QDir::Files | QDir::NoDotAndDotDot, QDir::Name);
 
-    imageList.clear();
-    for (const QString &file : files)
-        imageList << dir.absoluteFilePath(file);
+    m_images.clear();
+    for (const QFileInfo &file : files) {
+        m_images << file.absoluteFilePath();
+    }
 
-    currentIndex = imageList.isEmpty() ? -1 : 0;
+    m_currentIndex = m_images.isEmpty() ? -1 : 0;
 
-    qDebug() << "[ImageManager] 加载图片数:" << imageList.size();
+    qDebug() << "[ImageManager] 加载图片数:" << m_images.size();
+
+    emit currentIndexChanged();
+    emit totalCountChanged();
     emit currentImageChanged();
 }
 
-QString ImageManager::currentImage() const {
-    if (currentIndex >= 0 && currentIndex < imageList.size())
-        return QUrl::fromLocalFile(imageList[currentIndex]).toString();
-    return QString();
-}
-
-QString ImageManager::lastGoodImage() const {
-    if (!m_lastGoodImage.isEmpty())
-        return QUrl::fromLocalFile(m_lastGoodImage).toString();
-    return QString();
-}
-
-void ImageManager::markCurrent(bool isGood) {
-    if (currentIndex < 0 || currentIndex >= imageList.size())
+void ImageManager::markCurrent(bool good)
+{
+    if (m_currentIndex < 0 || m_currentIndex >= m_images.size())
         return;
 
-    const QString &img = imageList[currentIndex];
+    QString imgPath = m_images[m_currentIndex];
 
-    if (isGood) {
-        m_lastGoodImage = img;
+    qDebug() << "[ImageManager] 标记为" << (good ? "好图" : "坏图") << ":" << imgPath;
+
+    if (good) {
+        m_lastGoodImage = QUrl::fromLocalFile(imgPath);
         emit lastGoodImageChanged();
-        qDebug() << "[ImageManager] 标记好图:" << img;
-    } else {
-        qDebug() << "[ImageManager] 标记坏图:" << img;
     }
 
-    // 后续可加入写入标注结果到文件
+    next();
 }
 
-void ImageManager::next() {
-    if (currentIndex + 1 < imageList.size()) {
-        currentIndex++;
+void ImageManager::next()
+{
+    if (m_currentIndex + 1 < m_images.size()) {
+        m_currentIndex++;
+        emit currentIndexChanged();
         emit currentImageChanged();
     }
 }
 
-void ImageManager::previous() {
-    if (currentIndex - 1 >= 0) {
-        currentIndex--;
+void ImageManager::previous()
+{
+    if (m_currentIndex > 0) {
+        m_currentIndex--;
+        emit currentIndexChanged();
         emit currentImageChanged();
     }
 }

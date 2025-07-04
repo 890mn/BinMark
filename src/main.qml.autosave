@@ -96,7 +96,6 @@ FluWindow {
                 delegate: ItemDelegate {
                     width: ListView.view.width   // 限制宽度，防止撑出列表
                     text: fileName
-                    //wrapMode: Text.Wrap          // 长名字换行
                     font.pixelSize: 12
                     ToolTip.text: fileName
                     ToolTip.visible: hovered
