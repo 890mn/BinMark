@@ -3,22 +3,23 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Qt.labs.folderlistmodel
 import QtQuick.Dialogs
+import Qt.labs.platform as Platform
 
 Item {
     id: root
     width: 300
     height: parent.height
 
-    property url selectedFolder: "D://"
+    property url selectedFolder: ""
 
-    FileDialog {
+    Platform.FileDialog {
         id: folderPicker
-        title: "选择父文件夹"
-        //selectFolder: true
-        //folder: shortcuts.home
+        title: "选择图片所在文件夹"
+        folder: selectedFolder
+        //selectFolder: true   // ✅ 支持！
         onAccepted: {
-            selectedFolder = folderPicker.folder
-            folderModel.folder = selectedFolder
+            console.log("✅ 选中了文件夹:", folderPicker.folder)
+            imageManager.loadFromFolder(folderPicker.folder)
         }
     }
 

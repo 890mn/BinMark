@@ -4,9 +4,8 @@
 <context>
     <name>main</name>
     <message>
-        <location filename="main.qml" line="12"/>
         <source>BinMark</source>
-        <translation type="unfinished">BinMark</translation>
+        <translation type="obsolete">BinMark</translation>
     </message>
     <message>
         <source>Welcome to FluentUI</source>
