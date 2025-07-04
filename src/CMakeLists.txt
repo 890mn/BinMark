@@ -32,6 +32,8 @@ add_custom_target(Script-UpdateTranslations
     SOURCES ${TS_FILE_PATHS}
 )
 
+set(EXE_ICON_PATH "${CMAKE_SOURCE_DIR}/src/binMark.ico")
+
 set(PROJECT_SOURCES
     main.cpp
     qml.qrc
@@ -69,6 +71,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
     MACOSX_BUNDLE TRUE
     WIN32_EXECUTABLE TRUE
+    ICON "${EXE_ICON_PATH}"
 )
 
 include(GNUInstallDirs)
@@ -82,17 +85,6 @@ if(QT_VERSION_MAJOR EQUAL 6)
 endif()
 
 if (CMAKE_BUILD_TYPE MATCHES "Release")
-    if (APPLE)
-        find_program(QT_DEPLOY_QT NAMES macdeployqt)
-        add_custom_target(Script-DeployRelease
-            COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_SOURCE_DIR}/dist
-            COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} ${CMAKE_SOURCE_DIR}/dist
-            COMMAND ${QT_DEPLOY_QT} ${CMAKE_SOURCE_DIR}/dist/${PROJECT_NAME}.app -qmldir=${CMAKE_CURRENT_LIST_DIR}
-            COMMENT "MacOs Deploying Qt Dependencies After Build........."
-            SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt
-            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        )
-    endif()
     if(WIN32)
         find_program(QT_DEPLOY_QT NAMES windeployqt)
         add_custom_target(Script-DeployRelease
@@ -103,5 +95,10 @@ if (CMAKE_BUILD_TYPE MATCHES "Release")
             SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt
             WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         )
+    add_custom_target(SetIcon
+        COMMAND rcedit ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${PROJECT_NAME}.exe --set-icon ${EXE_ICON_PATH}
+        COMMENT "Setting icon for executable"
+    )
+    add_dependencies(Script-DeployRelease SetIcon)
 endif()
 endif()

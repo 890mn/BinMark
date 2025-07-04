@@ -8,7 +8,7 @@ FluLauncher {
     id: app
     Component.onCompleted: {
         FluApp.init(app)
-        FluApp.windowIcon = "qrc:/logo.ico"
+        FluApp.windowIcon = "qrc:/binMark.ico"
         FluRouter.routes = {
             "/":"qrc:/main.qml",
         }
