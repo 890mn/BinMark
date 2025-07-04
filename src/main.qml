@@ -72,7 +72,9 @@ FluWindow {
 
 
             Text {
-                text: selectedFolder == "" ? "Path will be shown here" : selectedFolder
+                text: selectedFolder == ""
+                    ? "Path will be shown here"
+                    : selectedFolder.toString().replace("file:///", "").replace("file://", "")
                 font.pixelSize: 12
                 wrapMode: Text.Wrap
                 elide: Text.ElideLeft
@@ -96,17 +98,13 @@ FluWindow {
                 delegate: ItemDelegate {
                     width: ListView.view.width   // 限制宽度，防止撑出列表
                     text: fileName
-                    //wrapMode: Text.Wrap          // 长名字换行
                     font.pixelSize: 12
-                    ToolTip.text: fileName
-                    ToolTip.visible: hovered
 
                     contentItem: Text {
                         text: fileName
                         wrapMode: Text.Wrap
                         elide: Text.ElideMiddle
                         font.pixelSize: 12
-                        color: control.pressed ? "#0078d4" : "#000"
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.left: parent.left
                         anchors.right: parent.right
@@ -147,6 +145,7 @@ FluWindow {
 
                     Image {
                         anchors.fill: parent
+                        anchors.margins: 5
                         fillMode: Image.PreserveAspectFit
                         source: globalImageManager.currentImage
                         onStatusChanged: {
