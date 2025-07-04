@@ -22,9 +22,9 @@ int main(int argc, char *argv[])
     }
 
     QQmlApplicationEngine engine;
-    ImageManager imageManager;
+    ImageManager manager;
 
-    engine.rootContext()->setContextProperty("imageManager", &imageManager);
+    engine.rootContext()->setContextProperty("globalImageManager", &manager);
     const QUrl url(QStringLiteral("qrc:/App.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
         &app, [url](QObject *obj, const QUrl &objUrl) {
