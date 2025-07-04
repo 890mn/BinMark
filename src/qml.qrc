@@ -3,6 +3,5 @@
         <file>main.qml</file>
         <file>App.qml</file>
         <file>logo.ico</file>
-        <file>ImageViewer.qml</file>
     </qresource>
 </RCC>

@@ -1,23 +1,44 @@
 #include "ImageManager.h"
 #include <QDir>
-#include <QDebug>
 #include <QFileInfo>
+#include <QDebug>
+#include <QStandardPaths>
+#include <QFile>
+#include <QTextStream>
+#include <QUrl>
 
 ImageManager::ImageManager(QObject *parent)
     : QObject(parent)
+{}
+
+void ImageManager::loadFromFolder(const QUrl &folderUrl)
 {
+    QString folderPath = folderUrl.toLocalFile();
+    m_currentFolder = folderPath;
+
+    QDir dir(folderPath);
+    QStringList filters = {"*.png", "*.jpg", "*.jpeg", "*.bmp"};
+    QFileInfoList fileInfos = dir.entryInfoList(filters, QDir::Files, QDir::Name);
+
+    m_imagePaths.clear();
+    for (const QFileInfo &fileInfo : fileInfos) {
+        m_imagePaths.append(fileInfo.absoluteFilePath());
+    }
+
+    m_currentIndex = 0;
+    emit imageChanged();
 }
 
 QUrl ImageManager::currentImage() const
 {
-    if (m_currentIndex >= 0 && m_currentIndex < m_images.size())
-        return QUrl::fromLocalFile(m_images[m_currentIndex]);
-    return QUrl();
+    if (m_currentIndex >= 0 && m_currentIndex < m_imagePaths.size())
+        return QUrl::fromLocalFile(m_imagePaths[m_currentIndex]);
+    return {};
 }
 
 QUrl ImageManager::lastGoodImage() const
 {
-    return m_lastGoodImage;
+    return QUrl::fromLocalFile(m_lastGoodImage);
 }
 
 int ImageManager::currentIndex() const
@@ -27,61 +48,63 @@ int ImageManager::currentIndex() const
 
 int ImageManager::totalCount() const
 {
-    return m_images.size();
-}
-
-void ImageManager::loadFromFolder(const QUrl &folderUrl)
-{
-    QString folderPath = folderUrl.toLocalFile();
-    QDir dir(folderPath);
-    QStringList filters = { "*.png", "*.jpg", "*.jpeg", "*.bmp" };
-    QFileInfoList files = dir.entryInfoList(filters, QDir::Files | QDir::NoDotAndDotDot, QDir::Name);
-
-    m_images.clear();
-    for (const QFileInfo &file : files) {
-        m_images << file.absoluteFilePath();
-    }
-
-    m_currentIndex = m_images.isEmpty() ? -1 : 0;
-
-    qDebug() << "[ImageManager] 加载图片数:" << m_images.size();
-
-    emit currentIndexChanged();
-    emit totalCountChanged();
-    emit currentImageChanged();
-}
-
-void ImageManager::markCurrent(bool good)
-{
-    if (m_currentIndex < 0 || m_currentIndex >= m_images.size())
-        return;
-
-    QString imgPath = m_images[m_currentIndex];
-
-    qDebug() << "[ImageManager] 标记为" << (good ? "好图" : "坏图") << ":" << imgPath;
-
-    if (good) {
-        m_lastGoodImage = QUrl::fromLocalFile(imgPath);
-        emit lastGoodImageChanged();
-    }
-
-    next();
+    return m_imagePaths.size();
 }
 
 void ImageManager::next()
 {
-    if (m_currentIndex + 1 < m_images.size()) {
-        m_currentIndex++;
-        emit currentIndexChanged();
-        emit currentImageChanged();
+    if (m_currentIndex < m_imagePaths.size() - 1) {
+        ++m_currentIndex;
+        emit imageChanged();
     }
 }
 
 void ImageManager::previous()
 {
     if (m_currentIndex > 0) {
-        m_currentIndex--;
-        emit currentIndexChanged();
-        emit currentImageChanged();
+        --m_currentIndex;
+        emit imageChanged();
     }
+}
+
+void ImageManager::markCurrent(bool isGood)
+{
+    if (m_currentIndex < 0 || m_currentIndex >= m_imagePaths.size())
+        return;
+
+    QString currentPath = m_imagePaths[m_currentIndex];
+    QFileInfo info(currentPath);
+    QString folderName = isGood ? "Well" : "Bad";
+    QDir dir(m_currentFolder);
+    QString targetDir = dir.absoluteFilePath(folderName);
+
+    if (!dir.exists(folderName))
+        dir.mkdir(folderName);
+
+    QString targetPath = QDir(targetDir).filePath(info.fileName());
+
+    if (QFile::rename(currentPath, targetPath)) {
+        qDebug() << "[ImageManager] 移动成功:" << targetPath;
+
+        // 记录 CSV
+        QString csvPath = dir.filePath("BinMark_result.csv");
+        QFile file(csvPath);
+        if (file.open(QIODevice::Append | QIODevice::Text)) {
+            QTextStream out(&file);
+            out << info.fileName() << "," << (isGood ? "good" : "bad") << "\n";
+            file.close();
+        }
+
+        if (isGood)
+            m_lastGoodImage = targetPath;
+
+        m_imagePaths.removeAt(m_currentIndex);
+
+        if (m_currentIndex >= m_imagePaths.size())
+            m_currentIndex = m_imagePaths.size() - 1;
+    } else {
+        qDebug() << "[ImageManager] ❌ 移动失败:" << currentPath;
+    }
+
+    emit imageChanged();
 }

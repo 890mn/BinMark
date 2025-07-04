@@ -29,7 +29,6 @@ FluWindow {
             Layout.fillHeight: true
             spacing: 8
 
-            // 按钮区下方显示当前进度
             Text {
                 text: globalImageManager.totalCount > 0
                       ? `${globalImageManager.currentIndex + 1} / ${globalImageManager.totalCount}`
@@ -69,7 +68,6 @@ FluWindow {
                     }
                 }
             }
-
 
             Text {
                 text: selectedFolder == ""

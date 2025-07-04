@@ -43,6 +43,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         ${PROJECT_SOURCES}
         ImageManager.h
         ImageManager.cpp
+
+
     )
 else()
     add_executable(${PROJECT_NAME}
