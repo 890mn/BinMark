@@ -1,7 +1,16 @@
 <RCC>
     <qresource prefix="/">
-        <file>main.qml</file>
         <file>App.qml</file>
         <file>binMark.ico</file>
+        <file alias="assets/archive-dark.png">../assets/archive-dark.png</file>
+        <file alias="assets/archive-light.png">../assets/archive-light.png</file>
+        <file alias="assets/down-dark.png">../assets/down-dark.png</file>
+        <file alias="assets/down-light.png">../assets/down-light.png</file>
+        <file alias="assets/pin-dark.png">../assets/pin-dark.png</file>
+        <file alias="assets/pin-light.png">../assets/pin-light.png</file>
+        <file alias="assets/undo-dark.png">../assets/undo-dark.png</file>
+        <file alias="assets/undo-light.png">../assets/undo-light.png</file>
+        <file alias="assets/up-dark.png">../assets/up-dark.png</file>
+        <file alias="assets/up-light.png">../assets/up-light.png</file>
     </qresource>
 </RCC>
